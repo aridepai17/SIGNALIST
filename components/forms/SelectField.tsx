@@ -34,6 +34,7 @@ const SelectField = ({
 				render={({ field }) => (
 					<Select value={field.value} onValueChange={field.onChange}>
 						<SelectTrigger className="select-trigger">
+                            id={name}
 							<SelectValue placeholder={placeholder} />
 						</SelectTrigger>
 						<SelectContent className="bg-gray-800 border-gray-600 text-white">

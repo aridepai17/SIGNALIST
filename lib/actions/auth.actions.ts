@@ -19,19 +19,22 @@ export const signUpWithEmail = async ({
 		});
 
 		if (response) {
-			await inngest.send({
-				name: "app/user.created",
-				data: {
-					email,
-					name: fullName,
-					country,
-					investmentGoals,
-					riskTolerance,
-					preferredIndustry,
-				},
-			});
+			try {
+				await inngest.send({
+					name: "app/user.created",
+					data: {
+						email,
+						name: fullName,
+						country,
+						investmentGoals,
+						riskTolerance,
+						preferredIndustry,
+					},
+				});
+			} catch (err) {
+				console.error("User.created event failed", err);
+			}
 		}
-
 		return { success: true, data: response };
 	} catch (e) {
 		console.log("Sign up failed", e);
@@ -55,6 +58,7 @@ export const signInWithEmail = async ({ email, password }: SignInFormData) => {
 export const signOut = async () => {
 	try {
 		await auth.api.signOut({ headers: await headers() });
+        return { success: true };
 	} catch (e) {
 		console.log("Sign Out failed", e);
 		return { success: false, error: "Sign out failed" };
