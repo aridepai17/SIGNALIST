@@ -14,7 +14,10 @@ function redactedUserId(user: Record<string, unknown>): string {
 	if (typeof user.id === "string") return `user-${user.id}`;
 	// Fallback: hash-like prefix from email (no raw PII)
 	const email = typeof user.email === "string" ? user.email : "";
-	const hash = Array.from(email).reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0);
+	const hash = Array.from(email).reduce(
+		(h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0,
+		0,
+	);
 	return `user-${Math.abs(hash).toString(36)}`;
 }
 
@@ -142,7 +145,10 @@ export const sendDailyNewsSummary = inngest.createFunction(
 
 				userNewsSummaries.push({ user, newsContent });
 			} catch (e) {
-				console.error("Failed to summarize news for:", redactedUserId(user as Record<string, unknown>));
+				console.error(
+					"Failed to summarize news for:",
+					redactedUserId(user as Record<string, unknown>),
+				);
 				userNewsSummaries.push({ user, newsContent: null });
 			}
 		}
