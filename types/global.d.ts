@@ -47,11 +47,11 @@ declare global {
 	};
 
 	type SelectFieldProps = {
-		name: string;
+		name: keyof SignUpFormData;
 		label: string;
 		placeholder: string;
 		options: readonly Option[];
-		control: Control;
+		control: Control<SignUpFormData>;
 		error?: FieldError;
 		required?: boolean;
 	};
