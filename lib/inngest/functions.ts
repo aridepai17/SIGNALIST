@@ -9,6 +9,15 @@ import { getWatchlistSymbolsByEmail } from "@/lib/actions/watchlist.actions";
 import { getNews } from "@/lib/actions/finnhub.actions";
 import { getFormattedTodayDate } from "@/lib/utils";
 
+/** Return a short redacted tag for a user, safe for logs/step IDs. */
+function redactedUserId(user: Record<string, unknown>): string {
+	if (typeof user.id === "string") return `user-${user.id}`;
+	// Fallback: hash-like prefix from email (no raw PII)
+	const email = typeof user.email === "string" ? user.email : "";
+	const hash = Array.from(email).reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0);
+	return `user-${Math.abs(hash).toString(36)}`;
+}
+
 export const sendSignUpEmail = inngest.createFunction(
 	{ id: "sign-up-email" },
 	{ event: "app/user.created" },
@@ -90,7 +99,7 @@ export const sendDailyNewsSummary = inngest.createFunction(
 				} catch (e) {
 					console.error(
 						"daily-news: error preparing user news",
-						user.email,
+						redactedUserId(user),
 						e,
 					);
 					perUser.push({ user, articles: [] });
@@ -113,7 +122,7 @@ export const sendDailyNewsSummary = inngest.createFunction(
 				);
 
 				const response = await step.ai.infer(
-					`summarize-news-${user.email}`,
+					`summarize-news-${redactedUserId(user as Record<string, unknown>)}`,
 					{
 						model: step.ai.models.gemini({
 							model: "gemini-2.5-flash-lite",
@@ -133,7 +142,7 @@ export const sendDailyNewsSummary = inngest.createFunction(
 
 				userNewsSummaries.push({ user, newsContent });
 			} catch (e) {
-				console.error("Failed to summarize news for : ", user.email);
+				console.error("Failed to summarize news for:", redactedUserId(user as Record<string, unknown>));
 				userNewsSummaries.push({ user, newsContent: null });
 			}
 		}
