@@ -34,8 +34,13 @@ export const connectToDatabase = async () => {
 		throw e;
 	}
 
+	const redactedUri = MONGODB_URI.replace(
+		/^(mongodb(?:\+srv)?:\/\/[^:]+:)[^@]+@/i,
+		"$1***@",
+	);
+
 	console.log(
-		`Connected to database ${process.env.NODE_ENV} - ${MONGODB_URI}`,
+		`Connected to database ${process.env.NODE_ENV} - ${redactedUri}`,
 	);
 
 	return cached.conn;
