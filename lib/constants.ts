@@ -36,6 +36,15 @@ export const CONDITION_OPTIONS = [
 	{ value: "less", label: "Less than (<)" },
 ];
 
+// Convert Finnhub symbol format to TradingView format
+// e.g. "RELIANCE.NS" -> "NSE:RELIANCE", "SBIN.BO" -> "BSE:SBIN", "AAPL" -> "AAPL"
+const toTradingViewSymbol = (symbol: string): string => {
+	const upper = symbol.toUpperCase();
+	if (upper.endsWith(".NS")) return `NSE:${upper.slice(0, -3)}`;
+	if (upper.endsWith(".BO")) return `BSE:${upper.slice(0, -3)}`;
+	return upper;
+};
+
 // TradingView Charts
 export const MARKET_OVERVIEW_WIDGET_CONFIG = {
 	colorTheme: "dark", // dark mode
@@ -63,6 +72,11 @@ export const MARKET_OVERVIEW_WIDGET_CONFIG = {
 				{ s: "NYSE:HSBC", d: "Hsbc Hldgs Plc" },
 				{ s: "NYSE:C", d: "Citigroup Inc" },
 				{ s: "NYSE:MA", d: "Mastercard Incorporated" },
+				{ s: "NYSE:GS", d: "Goldman Sachs" },
+				{ s: "NYSE:MS", d: "Morgan Stanley" },
+				{ s: "NYSE:BLK", d: "BlackRock" },
+				{ s: "NYSE:SCHW", d: "Charles Schwab" },
+				{ s: "NYSE:AXP", d: "American Express" },
 			],
 		},
 		{
@@ -74,6 +88,10 @@ export const MARKET_OVERVIEW_WIDGET_CONFIG = {
 				{ s: "NASDAQ:META", d: "Meta Platforms" },
 				{ s: "NYSE:ORCL", d: "Oracle Corp" },
 				{ s: "NASDAQ:INTC", d: "Intel Corp" },
+				{ s: "NASDAQ:NVDA", d: "NVIDIA" },
+				{ s: "NASDAQ:AMD", d: "AMD" },
+				{ s: "NASDAQ:CRM", d: "Salesforce" },
+				{ s: "NASDAQ:ADBE", d: "Adobe" },
 			],
 		},
 		{
@@ -84,6 +102,11 @@ export const MARKET_OVERVIEW_WIDGET_CONFIG = {
 				{ s: "NYSE:T", d: "At&t Inc" },
 				{ s: "NYSE:WMT", d: "Walmart" },
 				{ s: "NYSE:V", d: "Visa" },
+				{ s: "NYSE:UNH", d: "UnitedHealth Group" },
+				{ s: "NYSE:JNJ", d: "Johnson & Johnson" },
+				{ s: "NYSE:PG", d: "Procter & Gamble" },
+				{ s: "NYSE:KO", d: "Coca-Cola" },
+				{ s: "NYSE:DIS", d: "Walt Disney" },
 			],
 		},
 	],
@@ -144,6 +167,11 @@ export const MARKET_DATA_WIDGET_CONFIG = {
 				{ name: "NYSE:HSBC", displayName: "Hsbc Hldgs Plc" },
 				{ name: "NYSE:C", displayName: "Citigroup Inc" },
 				{ name: "NYSE:MA", displayName: "Mastercard Incorporated" },
+				{ name: "NYSE:GS", displayName: "Goldman Sachs" },
+				{ name: "NYSE:MS", displayName: "Morgan Stanley" },
+				{ name: "NYSE:BLK", displayName: "BlackRock" },
+				{ name: "NYSE:SCHW", displayName: "Charles Schwab" },
+				{ name: "NYSE:AXP", displayName: "American Express" },
 			],
 		},
 		{
@@ -155,6 +183,10 @@ export const MARKET_DATA_WIDGET_CONFIG = {
 				{ name: "NASDAQ:META", displayName: "Meta Platforms" },
 				{ name: "NYSE:ORCL", displayName: "Oracle Corp" },
 				{ name: "NASDAQ:INTC", displayName: "Intel Corp" },
+				{ name: "NASDAQ:NVDA", displayName: "NVIDIA" },
+				{ name: "NASDAQ:AMD", displayName: "AMD" },
+				{ name: "NASDAQ:CRM", displayName: "Salesforce" },
+				{ name: "NASDAQ:ADBE", displayName: "Adobe" },
 			],
 		},
 		{
@@ -165,13 +197,18 @@ export const MARKET_DATA_WIDGET_CONFIG = {
 				{ name: "NYSE:T", displayName: "At&t Inc" },
 				{ name: "NYSE:WMT", displayName: "Walmart" },
 				{ name: "NYSE:V", displayName: "Visa" },
+				{ name: "NYSE:UNH", displayName: "UnitedHealth Group" },
+				{ name: "NYSE:JNJ", displayName: "Johnson & Johnson" },
+				{ name: "NYSE:PG", displayName: "Procter & Gamble" },
+				{ name: "NYSE:KO", displayName: "Coca-Cola" },
+				{ name: "NYSE:DIS", displayName: "Walt Disney" },
 			],
 		},
 	],
 };
 
 export const SYMBOL_INFO_WIDGET_CONFIG = (symbol: string) => ({
-	symbol: symbol.toUpperCase(),
+	symbol: toTradingViewSymbol(symbol),
 	colorTheme: "dark",
 	isTransparent: true,
 	locale: "en",
@@ -192,7 +229,7 @@ export const CANDLE_CHART_WIDGET_CONFIG = (symbol: string) => ({
 	locale: "en",
 	save_image: false,
 	style: 1,
-	symbol: symbol.toUpperCase(),
+	symbol: toTradingViewSymbol(symbol),
 	theme: "dark",
 	timezone: "Etc/UTC",
 	backgroundColor: "#141414",
@@ -218,7 +255,7 @@ export const BASELINE_WIDGET_CONFIG = (symbol: string) => ({
 	locale: "en",
 	save_image: false,
 	style: 10,
-	symbol: symbol.toUpperCase(),
+	symbol: toTradingViewSymbol(symbol),
 	theme: "dark",
 	timezone: "Etc/UTC",
 	backgroundColor: "#141414",
@@ -232,7 +269,7 @@ export const BASELINE_WIDGET_CONFIG = (symbol: string) => ({
 });
 
 export const TECHNICAL_ANALYSIS_WIDGET_CONFIG = (symbol: string) => ({
-	symbol: symbol.toUpperCase(),
+	symbol: toTradingViewSymbol(symbol),
 	colorTheme: "dark",
 	isTransparent: true,
 	locale: "en",
@@ -243,7 +280,7 @@ export const TECHNICAL_ANALYSIS_WIDGET_CONFIG = (symbol: string) => ({
 });
 
 export const COMPANY_PROFILE_WIDGET_CONFIG = (symbol: string) => ({
-	symbol: symbol.toUpperCase(),
+	symbol: toTradingViewSymbol(symbol),
 	colorTheme: "dark",
 	isTransparent: true,
 	locale: "en",
@@ -252,7 +289,7 @@ export const COMPANY_PROFILE_WIDGET_CONFIG = (symbol: string) => ({
 });
 
 export const COMPANY_FINANCIALS_WIDGET_CONFIG = (symbol: string) => ({
-	symbol: symbol.toUpperCase(),
+	symbol: toTradingViewSymbol(symbol),
 	colorTheme: "dark",
 	isTransparent: true,
 	locale: "en",
@@ -322,6 +359,28 @@ export const POPULAR_STOCK_SYMBOLS = [
 	"DIDI",
 	"GRAB",
 	"SE",
+
+	// Indian Stocks (NSE)
+	"RELIANCE.NS",
+	"TCS.NS",
+	"INFY.NS",
+	"HDFCBANK.NS",
+	"ICICIBANK.NS",
+	"HINDUNILVR.NS",
+	"ITC.NS",
+	"SBIN.NS",
+	"BHARTIARTL.NS",
+	"KOTAKBANK.NS",
+	"LT.NS",
+	"AXISBANK.NS",
+	"WIPRO.NS",
+	"HCLTECH.NS",
+	"ADANIENT.NS",
+	"TATAMOTORS.NS",
+	"MARUTI.NS",
+	"SUNPHARMA.NS",
+	"TITAN.NS",
+	"BAJFINANCE.NS",
 ];
 
 export const NO_MARKET_NEWS =
