@@ -78,8 +78,8 @@ export async function addToWatchlist(symbol: string, company: string) {
 
 		revalidatePath("/watchlist");
 		return { success: true };
-	} catch (err: any) {
-		if (err?.code === 11000) return { success: true }; // already exists
+	} catch (err: unknown) {
+		if (err instanceof Error && (err as Error & { code?: number }).code === 11000) return { success: true }; // already exists
 		console.error("addToWatchlist", err);
 		return { success: false, error: "Failed to add to watchlist" };
 	}
@@ -138,15 +138,15 @@ export async function getUserWatchlist(): Promise<StockWithData[]> {
 			items.map(async (item) => {
 				const sym = String(item.symbol);
 				const [quote, profile, metrics] = await Promise.allSettled([
-					fetchJSON<any>(
+					fetchJSON<Record<string, unknown>>(
 						`${FINNHUB_BASE_URL}/quote?symbol=${encodeURIComponent(sym)}&token=${token}`,
 						60,
 					),
-					fetchJSON<any>(
+					fetchJSON<Record<string, unknown>>(
 						`${FINNHUB_BASE_URL}/stock/profile2?symbol=${encodeURIComponent(sym)}&token=${token}`,
 						3600,
 					),
-					fetchJSON<any>(
+					fetchJSON<Record<string, unknown>>(
 						`${FINNHUB_BASE_URL}/stock/metric?symbol=${encodeURIComponent(sym)}&metric=all&token=${token}`,
 						3600,
 					),
@@ -156,10 +156,11 @@ export async function getUserWatchlist(): Promise<StockWithData[]> {
 				const p = profile.status === "fulfilled" ? profile.value : null;
 				const m = metrics.status === "fulfilled" ? metrics.value : null;
 
-				const currentPrice = q?.c ?? undefined;
-				const changePercent = q?.dp ?? undefined;
-				const marketCapRaw = p?.marketCapitalization;
-				const peRaw = m?.metric?.peBasicExclExtraTTM;
+				const currentPrice = q?.c != null ? Number(q.c) : undefined;
+				const changePercent = q?.dp != null ? Number(q.dp) : undefined;
+				const marketCapRaw = p?.marketCapitalization != null ? Number(p.marketCapitalization) : undefined;
+				const metricObj = m?.metric as Record<string, unknown> | undefined;
+				const peRaw = metricObj?.peBasicExclExtraTTM != null ? Number(metricObj.peBasicExclExtraTTM) : undefined;
 
 				let marketCap: string | undefined;
 				if (marketCapRaw != null) {
@@ -174,7 +175,7 @@ export async function getUserWatchlist(): Promise<StockWithData[]> {
 				const result: StockWithData = {
 					userId: item.userId,
 					symbol: sym,
-					company: p?.name || item.company,
+					company: (p?.name ? String(p.name) : "") || item.company,
 					addedAt: item.addedAt,
 					currentPrice,
 					changePercent,
