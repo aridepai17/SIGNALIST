@@ -1,11 +1,9 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
-
-/*
-Minimal WatchlistButton implementation to satisfy page requirements.
-This component focuses on UI contract only. It toggles local state and
-calls onWatchlistChange if provided. Styling hooks match globals.css.
-*/
+import React, { useEffect, useMemo, useState, useTransition } from "react";
+import {
+	addToWatchlist,
+	removeFromWatchlist,
+} from "@/lib/actions/watchlist.actions";
 
 const WatchlistButton = ({
 	symbol,
@@ -16,10 +14,11 @@ const WatchlistButton = ({
 	onWatchlistChange,
 }: WatchlistButtonProps) => {
 	const [added, setAdded] = useState<boolean>(!!isInWatchlist);
+	const [isPending, startTransition] = useTransition();
 
-    useEffect(() => {
-        setAdded(!!isInWatchlist);
-    }, [isInWatchlist]);
+	useEffect(() => {
+		setAdded(!!isInWatchlist);
+	}, [isInWatchlist]);
 
 	const label = useMemo(() => {
 		if (type === "icon") return added ? "" : "";
@@ -28,14 +27,26 @@ const WatchlistButton = ({
 
 	const handleClick = () => {
 		const next = !added;
-		setAdded(next);
-		onWatchlistChange?.(symbol, next);
+		setAdded(next); // optimistic
+
+		startTransition(async () => {
+			const result = next
+				? await addToWatchlist(symbol, company)
+				: await removeFromWatchlist(symbol);
+
+			if (!result.success) {
+				setAdded(!next); // rollback
+			} else {
+				onWatchlistChange?.(symbol, next);
+			}
+		});
 	};
 
 	if (type === "icon") {
 		return (
 			<button
-                type="button"
+				type="button"
+				disabled={isPending}
 				title={
 					added
 						? `Remove ${symbol} from watchlist`
@@ -70,6 +81,7 @@ const WatchlistButton = ({
 	return (
 		<button
 			type="button"
+			disabled={isPending}
 			className={`watchlist-btn ${added ? "watchlist-remove" : ""}`}
 			onClick={handleClick}
 		>

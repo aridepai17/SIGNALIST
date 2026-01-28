@@ -292,7 +292,7 @@
     }
 
     .watchlist-btn {
-        @apply bg-yellow-500 text-base hover:bg-yellow-500 text-gray-900 w-full rounded h-11 font-semibold cursor-pointer;
+        @apply bg-yellow-500 text-base hover:bg-yellow-500 text-gray-900 w-75 rounded h-11 font-bold cursor-pointer;
     }
 
     .watchlist-remove {
