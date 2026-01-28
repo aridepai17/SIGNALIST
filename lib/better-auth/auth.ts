@@ -13,7 +13,7 @@ export const getAuth = () => {
 				if (!db) throw new Error("MongoDB connection not found");
 
 				return betterAuth({
-					database: mongodbAdapter(db as any),
+					database: mongodbAdapter(db as unknown as Parameters<typeof mongodbAdapter>[0]),
 					secret: process.env.BETTER_AUTH_SECRET,
 					baseURL: process.env.BETTER_AUTH_URL,
 					emailAndPassword: {
