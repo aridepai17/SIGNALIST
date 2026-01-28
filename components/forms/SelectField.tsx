@@ -33,8 +33,7 @@ const SelectField = ({
 				}}
 				render={({ field }) => (
 					<Select value={field.value} onValueChange={field.onChange}>
-						<SelectTrigger className="select-trigger">
-                            id={name}
+						<SelectTrigger id={name} className="select-trigger">
 							<SelectValue placeholder={placeholder} />
 						</SelectTrigger>
 						<SelectContent className="bg-gray-800 border-gray-600 text-white">
