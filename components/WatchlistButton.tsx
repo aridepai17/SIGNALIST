@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 /*
 Minimal WatchlistButton implementation to satisfy page requirements.
@@ -17,6 +17,10 @@ const WatchlistButton = ({
 }: WatchlistButtonProps) => {
 	const [added, setAdded] = useState<boolean>(!!isInWatchlist);
 
+    useEffect(() => {
+        setAdded(!!isInWatchlist);
+    }, [isInWatchlist]);
+
 	const label = useMemo(() => {
 		if (type === "icon") return added ? "" : "";
 		return added ? "Remove from Watchlist" : "Add to Watchlist";
@@ -31,6 +35,7 @@ const WatchlistButton = ({
 	if (type === "icon") {
 		return (
 			<button
+                type="button"
 				title={
 					added
 						? `Remove ${symbol} from watchlist`
@@ -64,6 +69,7 @@ const WatchlistButton = ({
 
 	return (
 		<button
+			type="button"
 			className={`watchlist-btn ${added ? "watchlist-remove" : ""}`}
 			onClick={handleClick}
 		>
