@@ -41,13 +41,16 @@ const CountrySelect = ({
     
 	const countries = countryList().getData();
 
-	const getFlagEmoji = (countryCode: string) => {
-		const codePoints = countryCode
-			.toUpperCase()
-			.split("")
-			.map((char) => 127397 + char.charCodeAt(0));
-		return String.fromCodePoint(...codePoints);
-	};
+	const FlagIcon = ({ code }: { code: string }) => (
+		<img
+			src={`https://flagcdn.com/w40/${code.toLowerCase()}.png`}
+			srcSet={`https://flagcdn.com/w80/${code.toLowerCase()}.png 2x`}
+			width={20}
+			height={14}
+			alt={code}
+			className="inline-block rounded-sm"
+		/>
+	);
 
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
@@ -60,7 +63,7 @@ const CountrySelect = ({
 				>
 					{value ? (
 						<span className="flex items-center gap-2">
-							<span>{getFlagEmoji(value)}</span>
+							<FlagIcon code={value} />
 							<span>
 								{
 									countries.find((c) => c.value === value)
@@ -107,9 +110,7 @@ const CountrySelect = ({
 										)}
 									/>
 									<span className="flex items-center gap-2">
-										<span>
-											{getFlagEmoji(country.value)}
-										</span>
+										<FlagIcon code={country.value} />
 										<span>{country.label}</span>
 									</span>
 								</CommandItem>
