@@ -5,7 +5,7 @@ import UserDropdown from "@/components/UserDropdown";
 import { searchStocks } from "@/lib/actions/finnhub.actions";
 
 const Header = async ({ user }: { user: User }) => {
-	const initialStocks = await searchStocks();
+	const initialStocks = await searchStocks(undefined, user.email);
 
 	return (
 		<header className="sticky top-0 header">
