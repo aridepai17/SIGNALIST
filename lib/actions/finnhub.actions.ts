@@ -141,10 +141,10 @@ export const searchStocks = cache(
 						try {
 							const url = `${FINNHUB_BASE_URL}/stock/profile2?symbol=${encodeURIComponent(sym)}&token=${token}`;
 							// Revalidate every hour
-							const profile = await fetchJSON<any>(url, 3600);
+							const profile = await fetchJSON<Record<string, unknown>>(url, 3600);
 							return { sym, profile } as {
 								sym: string;
-								profile: any;
+								profile: Record<string, unknown> | null;
 							};
 						} catch (e) {
 							console.error(
@@ -154,7 +154,7 @@ export const searchStocks = cache(
 							);
 							return { sym, profile: null } as {
 								sym: string;
-								profile: any;
+								profile: Record<string, unknown> | null;
 							};
 						}
 					}),
@@ -164,9 +164,9 @@ export const searchStocks = cache(
 					.map(({ sym, profile }) => {
 						const symbol = sym.toUpperCase();
 						const name: string | undefined =
-							profile?.name || profile?.ticker || undefined;
+							(profile?.name as string) || (profile?.ticker as string) || undefined;
 						const exchange: string | undefined =
-							profile?.exchange || undefined;
+							(profile?.exchange as string) || undefined;
 						if (!name) return undefined;
 						const r: FinnhubSearchResult = {
 							symbol,
@@ -177,7 +177,7 @@ export const searchStocks = cache(
 						// We don't include exchange in FinnhubSearchResult type, so carry via mapping later using profile
 						// To keep pipeline simple, attach exchange via closure map stage
 						// We'll reconstruct exchange when mapping to final type
-						(r as any).__exchange = exchange; // internal only
+						(r as unknown as Record<string, unknown>).__exchange = exchange; // internal only
 						return r;
 					})
 					.filter((x): x is FinnhubSearchResult => Boolean(x));
@@ -195,7 +195,7 @@ export const searchStocks = cache(
 				.map((r) => {
 					const upper = (r.symbol || "").toUpperCase();
 					const name = r.description || upper;
-					const exchangeFromProfile = (r as any).__exchange as
+					const exchangeFromProfile = (r as unknown as Record<string, unknown>).__exchange as
 						| string
 						| undefined;
 					const exchange = exchangeFromProfile || "US";
